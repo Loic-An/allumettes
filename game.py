@@ -148,15 +148,14 @@ def debug_personnages(turtle=t) -> None:
 def setenv() -> None:
     """Initialise la fenêtre de jeu."""
     global taille_fenetre
-    #t.setup(taille_fenetre[0], taille_fenetre[1])                                                                                   # taille de la fenêtre
-    wm=t.Screen()
-    wm._root.iconbitmap(r'star.ico')                                                                                         # icône de la fenêtre
-    sc=wm.getcanvas().winfo_toplevel()
-    sc.attributes("-fullscreen", True)
-    
-    #t._Screen._root.resizable(False, False)                                                                                         # empêche le redimensionnement de la fenêtre
+    t.setup(taille_fenetre[0], taille_fenetre[1])                                                                                   # taille de la fenêtre
+    wm=t.Screen()                                                                                                                   # récupère la fenêtre de jeu
+    wm._root.iconbitmap(r'star.ico')                                                                                                # icône de la fenêtre
+    #sc=wm.getcanvas().winfo_toplevel()                                                                                             # récupère la fenêtre de jeu
+    #sc.attributes("-fullscreen", True)                                                                                             # met la fenêtre en plein écran
+    t._Screen._root.resizable(False, False)                                                                                         # empêche le redimensionnement de la fenêtre
     t.title("SUPER MARIO ALLUMETTES.")                                                                                              # titre de la fenêtre
-    #t.tracer(0)                                                                                                                     # désactive l'animation de la tortue (pour gagner en vitesse)
+    t.tracer(0)                                                                                                                     # désactive l'animation de la tortue (pour gagner en vitesse)
     t.colormode(255)                                                                                                                # mode couleur rgb
     t.bgpic("bgrd.gif")                                                                                                             # image de fond
     t.hideturtle()                                                                                                                  # cache la tortue
@@ -274,9 +273,9 @@ def set_fleche_joueur(joueur: int,turtle=t):
 
 def set_fleche_goomba(tas: int,direction: int,turtle=t):
     """Affiche la flèche coulissant entre les tas de goombas."""
-    global taille_fenetre, nb_tas_global                                                                                            # appelle variable stockée dans taille_fenêrtre 
-    coord=(taille_fenetre[0]//2-1066, -taille_fenetre[1]//2+200)                                                                    #       
-    r = [tas-0.5*direction,tas] if direction else [tas]                                                                             #
+    global taille_fenetre, nb_tas_global                                                                                            # appelle variable stockée dans taille_fenêtre 
+    coord=(taille_fenetre[0]//2-1066, -taille_fenetre[1]//2+200)                                                                    # définie coordonnées pour fleche goomba
+    r = [tas-0.5*direction,tas] if direction else [tas]                                                                             # définit les tas sur lesquels la flèche doit être affichée
     if (direction == 1 and tas == 0) or (direction == -1 and tas == nb_tas_global-1):                                               # si on veut aller à gauche et qu'on est sur le premier tas ou si on veut aller à droite et qu'on est sur le dernier tas
         r=[0]                                                                                                                       #   on ne fait rien
     for i in r:                                                                                                                     # pour chaque tas
@@ -291,52 +290,52 @@ def up_down(menu: str,direction: int,turtle=t):
     global whatisselected, mainmenu, other                                                                                          # appelle les variables sotckées dans whatisselected, mainmenu, other
     turtle.up()                                                                                                                     # lève le stylo
     if menu!="singleplayer":                                                                                                        # condition si on se trouve sur le menu joueur       
-        old = mainmenu.index(whatisselected) if menu=="mainmenu" else other.index(whatisselected)                                   #
-        if menu=="mainmenu":                                                                                                        #
-            whatisselected = mainmenu[old-direction] if 0<=old-direction<=3 else mainmenu[old]                                      #
-        elif menu=="credits" or menu=="how to play":                                                                                #condition si l'on se trouve sur les menus crédits ou how to play 
-            if direction == 1:                                                                                                      #
-                if whatisselected == "EXIT":                                                                                        #
-                    whatisselected = "GO TO MAIN MENU"                                                                              #
-            elif direction==-1:                                                                                                     #
-                if whatisselected == "GO TO MAIN MENU":                                                                             #
-                    whatisselected = "EXIT"                                                                                         #
-        update_menu(whatisselected,(mainmenu if menu=="mainmenu" else other),turtle)                                                #
-    else:                                                                                                                           #
-        global nb_tas_global, tas_selectionne, l_alive, regle_global, turtle_compteur, over, deathmenu                              #
-        if over:                                                                                                                    #
-            if direction==1:                                                                                                        #
-                if whatisselected == "EXIT":                                                                                        #
-                    whatisselected = "GO TO MAIN MENU"                                                                              #
-                else:                                                                                                               #
-                    whatisselected = "PLAY AGAIN"                                                                                   #
-            elif direction==-1:                                                                                                     #
-                if whatisselected == "PLAY AGAIN":                                                                                  #
-                    whatisselected = "GO TO MAIN MENU"                                                                              #
-                else:                                                                                                               #
-                    whatisselected = "EXIT"                                                                                         #
-            update_menu(whatisselected,deathmenu,turtle)                                                                            #
-        old = tas_selectionne                                                                                                       #
-        if l_alive[old[0]]==sum(l_alive):                                                                                           #
-            return None                                                                                                             #
-        new = (tas_selectionne[0]+direction)%nb_tas_global                                                                          #
-        if l_alive[new]<regle_global[0]:                                                                                            #
-            ab=abs(direction)                                                                                                       #
-            return up_down(menu,(direction//ab)*(ab+1) if ab!=0 else 1,turtle)                                                      #
-        if old[1]>l_alive[new]:                                                                                                     #
-            u=-1                                                                                                                    #
-            while l_alive[new]<regle_global[u]:                                                                                     #
-                u-=1                                                                                                                #
-            old=(new,regle_global[u])                                                                                               #
-        tas_selectionne = (new,old[1])                                                                                              #
-        set_fleche_goomba(tas_selectionne[0],direction,turtle)                                                                      #
-        left_right(0,turtle_compteur)                                                                                               #
+        old = mainmenu.index(whatisselected) if menu=="mainmenu" else other.index(whatisselected)                                   #   stocke l'indice de la sélection
+        if menu=="mainmenu":                                                                                                        #   si l'on se trouve sur le menu principal
+            whatisselected = mainmenu[old-direction] if 0<=old-direction<=3 else mainmenu[old]                                      #       change la sélection en fonction de la direction
+        elif menu=="credits" or menu=="how to play":                                                                                #   si l'on se trouve sur les menus crédits ou how to play 
+            if direction == 1:                                                                                                      #       si on veut aller en haut
+                if whatisselected == "EXIT":                                                                                        #           si on est sur exit
+                    whatisselected = "GO TO MAIN MENU"                                                                              #               on va sur le menu principal
+            elif direction==-1:                                                                                                     #       si on veut aller en bas
+                if whatisselected == "GO TO MAIN MENU":                                                                             #           si on est sur le menu principal
+                    whatisselected = "EXIT"                                                                                         #               on va sur exit
+        update_menu(whatisselected,(mainmenu if menu=="mainmenu" else other),turtle)                                                #   met à jour le menu
+    else:                                                                                                                           # sinon
+        global nb_tas_global, tas_selectionne, l_alive, regle_global, turtle_compteur, over, deathmenu                              #  appelle les variables stockées dans les varaibles   
+        if over:                                                                                                                    #   si le jeu est terminé
+            if direction==1:                                                                                                        #      si on veut aller en haut
+                if whatisselected == "EXIT":                                                                                        #           si on est sur exit
+                    whatisselected = "GO TO MAIN MENU"                                                                              #               on va sur le menu principal
+                else:                                                                                                               #           sinon  
+                    whatisselected = "PLAY AGAIN"                                                                                   #               on va sur play again
+            elif direction==-1:                                                                                                     #      si on veut aller en bas
+                if whatisselected == "PLAY AGAIN":                                                                                  # si on veut sélectionner relancer une partie 
+                    whatisselected = "GO TO MAIN MENU"                                                                              # si on veut retourner au menu principal
+                else:                                                                                                               # sinon
+                    whatisselected = "EXIT"                                                                                         # si on veut fermer la page 
+            update_menu(whatisselected,deathmenu,turtle)                                                                            #   permet de changer de menu 
+        old = tas_selectionne                                                                                                       # stocke la sélection précédente
+        if l_alive[old[0]]==sum(l_alive):                                                                                           # si il ne reste plus qu'un tas
+            return None                                                                                                             #  on ne fait rien
+        new = (tas_selectionne[0]+direction)%nb_tas_global                                                                          # stocke le nouveau tas sélectionné
+        if l_alive[new]<regle_global[0]:                                                                                            # si le tas sélectionné est vide
+            ab=abs(direction)                                                                                                       #  stocke la valeur absolue de la direction
+            return up_down(menu,(direction//ab)*(ab+1) if ab!=0 else 1,turtle)                                                      #  on appelle la fonction up_down avec le tas suivant
+        if old[1]>l_alive[new]:                                                                                                     # si la règle sélectionnée est plus grande que le tas sélectionné
+            u=-1                                                                                                                    #   on initialise u à -1
+            while l_alive[new]<regle_global[u]:                                                                                     #   tant que la règle sélectionnée est plus grande que le tas sélectionné
+                u-=1                                                                                                                #       on décrémente u
+            old=(new,regle_global[u])                                                                                               #   on stocke le nouveau tas sélectionné et la nouvelle règle sélectionnée
+        tas_selectionne = (new,old[1])                                                                                              # on stocke le nouveau tas sélectionné et la règle sélectionnée
+        set_fleche_goomba(tas_selectionne[0],direction,turtle)                                                                      # on rafraichit la fleche
+        left_right(0,turtle_compteur)                                                                                               # on rafraichit le compteur
 
 
 def left_right(direction: int,turtle=t):
     """fonction pour interagir avec le menu."""
     global taille_fenetre, regle_global, l_alive, tas_selectionne
-    turtle.up()                                                                                                                     #
+    turtle.up()                                                                                                                     # lève le crayon
     regle_local = [i for i in regle_global if i<=l_alive[tas_selectionne[0]]]                                                       #
     value = tas_selectionne[1]                                                                                                      #
     if value in regle_local:                                                                                                        #
@@ -355,8 +354,8 @@ def left_right(direction: int,turtle=t):
 
 def update_menu(whatisselected: str,list_menu: list[str], turtle=t):
     """fonction pour mettre à jour le menu."""
-    global whatisthemenu, over                                                                                                      #
-    if whatisthemenu != "singleplayer" or over:                                                                                     #
+    global whatisthemenu, over                                                                                                      # appelle les valeurs stockées dans les variables 
+    if whatisthemenu != "singleplayer" or over:                                                                                     # 
         ind = list_menu.index(whatisselected)                                                                                       #
         print_menu = [list_menu[i] for i in range(ind-1,ind+2) if 0<=i<=len(list_menu)-1]                                           #
         turtle.clear()                                                                                                              #
@@ -383,52 +382,52 @@ def select(regle: list[int],nb_tas: int,nb_allumettes_max: int,turtle=t):
         if sum(l_alive)<regle[0] or (sum(l_alive)==l_alive[tas_selectionne[0]] and 0<l_alive[tas_selectionne[0]]<regle[0]):         # s'il n'y a plus d'allumettes ou plus assez pour jouer
             turtle.clear()                                                                                                          #   efface et noircit l'écran
             if 0<sum(l_alive):                                                                                                      # si le joueur ne reussit pas à prendre la dernière allumette, il perd
-                joueur = (joueur + 1 )%2                                                                                            #
-            turtle_compteur.clear()                                                                                                 #
-            turtle_fg.clear()                                                                                                       #
-            turtle_fj.clear()                                                                                                       #
-            turtle_joueur.clear()                                                                                                   #
-            if not joueur:                                                                                                          #
-                turtle_joueur.goto(-taille_fenetre[0]//2,taille_fenetre[1]//2)                                                      #
-                turtle_joueur.down()                                                                                                #
-                turtle_joueur.color((0,0,0))                                                                                        #
-                turtle_joueur.begin_fill()                                                                                          #
-                turtle_joueur.forward(taille_fenetre[0])                                                                            #
-                turtle_joueur.right(90)                                                                                             #
-                turtle_joueur.forward(taille_fenetre[1])                                                                            #
-                turtle_joueur.right(90)                                                                                             #
-                turtle_joueur.forward(taille_fenetre[0])                                                                            #
-                turtle_joueur.right(90)                                                                                             #
-                turtle_joueur.forward(taille_fenetre[1])                                                                            #
-                turtle_joueur.right(90)                                                                                             #
-                turtle_joueur.end_fill()                                                                                            #
-                turtle_joueur.goto(-99,66)                                                                                          #
-                print_personnage(10,6,turtle_joueur)                                                                                #
-            text("Player won!" if joueur else "game over", 0,100, (255,255,255), "center", 24, "bold",(1,3),t=turtle_joueur)        #
+                joueur = (joueur + 1 )%2                                                                                            #   change de joueur
+            turtle_compteur.clear()                                                                                                 # efface le compteur
+            turtle_fg.clear()                                                                                                       # efface la fleche goomba
+            turtle_fj.clear()                                                                                                       # efface le fleche joueur
+            turtle_joueur.clear()                                                                                                   # efface les joueur
+            if not joueur:                                                                                                          # si c'est le joueur 1 qui a perdu
+                turtle_joueur.goto(-taille_fenetre[0]//2,taille_fenetre[1]//2)                                                      #   on remplit l'écran de noir
+                turtle_joueur.down()                                                                                                #pose le stylo
+                turtle_joueur.color((0,0,0))                                                                                        #set la couleur de tracer en noir
+                turtle_joueur.begin_fill()                                                                                          #commence le remplissage du tracé 
+                turtle_joueur.forward(taille_fenetre[0])                                                                            #avance longueur fenêtre 
+                turtle_joueur.right(90)                                                                                             #tourne de 90 
+                turtle_joueur.forward(taille_fenetre[1])                                                                            #avance largeur fenêtre 
+                turtle_joueur.right(90)                                                                                             #tourne de 90
+                turtle_joueur.forward(taille_fenetre[0])                                                                            #avance longueur fenêtre
+                turtle_joueur.right(90)                                                                                             #tourne de 9à
+                turtle_joueur.forward(taille_fenetre[1])                                                                            #avance largeur fenêtre 
+                turtle_joueur.right(90)                                                                                             #tourne 90
+                turtle_joueur.end_fill()                                                                                            #fin du remplissage (la page est noire )
+                turtle_joueur.goto(-99,66)                                                                                          # place la tortue où on veut afficher le bowser 
+                print_personnage(10,6,turtle_joueur)                                                                                # affiche le logo de bowser
+            text("Player won!" if joueur else "game over", 0,100, (255,255,255), "center", 24, "bold",(1,3),t=turtle_joueur)        # affiche écran de victoire ou de défaite
             over,isgamestarted = isgamestarted, over                                                                                # le jeu n'est plus lancé
             setpersonnages_joueur(turtle_joueur, (0,joueur))                                                                        # affiche mario selon le joueur qui a gagné
             whatisselected = "PLAY AGAIN"                                                                                           # affiche le menu pour recommencer ou retourner au menu principal
             t.onkey(lambda :up_down(whatisthemenu, 1,turtle), controles["up"])                                                      # déplace la sélection vers le haut
             t.onkey(lambda :up_down(whatisthemenu,-1,turtle), controles["down"])                                                    # déplace la sélection vers le bas
             t.listen()                                                                                                              # écoute les touches
-            update_menu(whatisselected, deathmenu, turtle)                                                                          #                                                                     
+            update_menu(whatisselected, deathmenu, turtle)                                                                          #rafraichit le menu                                                                   
         elif not over:
-            up_down("singleplayer",0,turtle_fg)
-            p = sum([i for i in l_alive if i<regle[0]])
-            global l_tas
-            q = sum([l_tas[i]-l_alive[i] for i in range(len(l_alive)) if l_alive[i]>=regle[0]])
-            if p<=q and p>0:                                                                                                        # s'il y a des allumettes inaccessibles et assez de place pour les redistribuer
-                for i in range(nb_tas):                                                                                             #
-                    if l_alive[i]<regle[0]:                                                                                         #
-                        a = l_alive[i]                                                                                              #
-                        for j in range(a-1,-1,-1):                                                                                  #
-                            set_goomba(i,j,0,list_turtle_g[i][j])                                                                   #
-                        l_alive[i]=0                                                                                                #
-                        continue                                                                                                    #
-                    while l_alive[i]<l_tas[i] and p>0:                                                                              #
-                        set_goomba(i,l_alive[i],1,list_turtle_g[i][l_alive[i]])                                                     #
-                        l_alive[i]+=1                                                                                               #
-                        p-=1                                                                                                        #
+            up_down("singleplayer",0,turtle_fg) 
+            # p = sum([i for i in l_alive if i<regle[0]])
+            # global l_tas
+            # q = sum([l_tas[i]-l_alive[i] for i in range(len(l_alive)) if l_alive[i]>=regle[0]])
+            # if p<=q and p>0:                                                                                                      # s'il y a des allumettes inaccessibles et assez de place pour les redistribuer
+            #     for i in range(nb_tas):                                                                                           #
+            #         if l_alive[i]<regle[0]:                                                                                       #
+            #             a = l_alive[i]                                                                                            #
+            #             for j in range(a-1,-1,-1):                                                                                #
+            #                 set_goomba(i,j,0,list_turtle_g[i][j])                                                                 #
+            #             l_alive[i]=0                                                                                              #
+            #             continue                                                                                                  #
+            #         while l_alive[i]<l_tas[i] and p>0:                                                                            #
+            #             set_goomba(i,l_alive[i],1,list_turtle_g[i][l_alive[i]])                                                   #
+            #             l_alive[i]+=1                                                                                             #
+            #             p-=1                                                                                                      #
             left_right(0,turtle_compteur)                                                                                           #
             joueur = (joueur +1)%2                                                                                                  #
             set_fleche_joueur(joueur,turtle_fj)                                                                                     #
@@ -466,24 +465,24 @@ def select(regle: list[int],nb_tas: int,nb_allumettes_max: int,turtle=t):
     loading.up()                                                                                                                    #
     if whatisthemenu in ["singleplayer","how to play"] and not isgamestarted:                                                       #
         if over:                                                                                                                    #
-            t.clear()                                                                                                               #
+            t.clear()                                                                                                               # efface la tortue 
             [turtle_.clear() for i in list_turtle_g for turtle_ in i]                                                               #
             turtle_joueur.clear()                                                                                                   #
-        hide_title()                                                                                                                #
-        text("LOADING...", taille_fenetre[0]//2-30, -taille_fenetre[1]//2+20, (255,255,255), "right", 24, "bold",(1,3),t=loading)   #
-        t.update()                                                                                                                  #
-        if whatisthemenu=="singleplayer":                                                                                           #
-            isgamestarted=True                                                                                                      #
-            over = False                                                                                                            #
-            singleplayer(regle,nb_tas,nb_allumettes_max)                                                                            #
+        hide_title()                                                                                                                # appelle hide title 
+        text("LOADING...", taille_fenetre[0]//2-30, -taille_fenetre[1]//2+20, (255,255,255), "right", 24, "bold",(1,3),t=loading)   # affiche le loading de chargement 
+        t.update()                                                                                                                  # rafraichir écran avant que fonction soit terminée 
+        if whatisthemenu=="singleplayer":                                                                                           # si on veut aller sur singleplayer 
+            isgamestarted=True                                                                                                      #   on indique qu'on a démarré le jeu 
+            over = False                                                                                                            #   on indique qu'on a pas fini le jeu
+            singleplayer(regle,nb_tas,nb_allumettes_max)                                                                            #   appelle singlepayer 
         else:                                                                                                                       #
-            menuregle(nb_tas,nb_allumettes_max,regle,turtle=t)                                                                      #
-        loading.clear()                                                                                                             #
-    elif whatisthemenu=="credits":                                                                                                  #
-        menucredits()                                                                                                               #
-    else:                                                                                                                           #
-        t.clear()                                                                                                                   #
-    update_menu(whatisselected,(mainmenu if whatisthemenu == "mainmenu" else other),turtle)                                         #
+            menuregle(nb_tas,nb_allumettes_max,regle,turtle=t)                                                                      # appelle menu regle 
+        loading.clear()                                                                                                             # efface la tortue loading 
+    elif whatisthemenu=="credits":                                                                                                  # si le menu est credits 
+        menucredits()                                                                                                               #   appelle focntion menucredits( redirige vers menucredits)
+    else:                                                                                                                           # sinon
+        t.clear()                                                                                                                   #   efface la tortue t
+    update_menu(whatisselected,(mainmenu if whatisthemenu == "mainmenu" else other),turtle)                                         # appelle le update menu pour aller sur l'interface choisie 
  
 
 def singleplayer(regle: list[int], nb_tas: int, nb_allumettes_max: int) -> None:                
@@ -529,7 +528,7 @@ def tour_ordi(nb_tas, regle,nb_allumettes_max):
         c= 1 if randint(0,1) else -1                                                                                                #   choisit un sens de selection
         up_down("singleplayer",c,turtle_fg)                                                                                         #   change la fleche de tas
         t.update()                                                                                                                  #   actualise l'affichage
-        time.sleep(0.4)                                                                                                             #   
+        time.sleep(0.4)                                                                                                             #  ralentit l'animation de la flèche pour simuler tour ordi
     tas_selectionne = (a,b)                                                                                                         # initialise le tas selectionne (a) et le nombre d'allumettes a enlever (b)
     up_down("singleplayer",0,turtle_fg)                                                                                             # change la fleche de tas
     select(regle,nb_tas,nb_allumettes_max,tr)                                                                                       # enleve les allumettes
@@ -548,21 +547,21 @@ def menuregle(nb_tas: int, nb_allumettes_max: int, regle: list[int],turtle=t) ->
         turtle.right(90)                                                                                                            #  tourne de 90°
     turtle.end_fill()                                                                                                               # termine le remplissage
     if len(regle) == 1:                                                                                                             # si la regle est de la forme [x]
-        texte = f"{regle[0]} allumette" if regle[0]==1 else f"{regle[0]} allumettes"                                                #   affiche "x allumette" ou "x allumettes"
+        texte = str(regle[0]) + " allumette"+ ("s" if regle!=1 else "")                                                             #   affiche "1 allumette" ou "x allumettes"
     else:                                                                                                                           # sinon
         texte = ', '.join(map(lambda a: str(a),regle[:-1]))+f" ou {regle[-1]} allumettes"                                           #   affiche "x, y ou z allumettes"
     text("regle du jeu :", 0, 255,(254,222,201), "center",24, "normal",(1,3), turtle)                                               # Affiche la règle du jeu
-    text(f"Il y a {nb_tas} tas d'allumettes", -350, 225,(254,222,201), "left",16, "normal",(1,3), turtle)                           #
-    text(f"contenant chacun entre {regle[0]} et {nb_allumettes_max} allumettes:", -350, 195,(254,222,201), "left",16, "normal",(1,3), turtle)
-    text("Le joueur qui prend la dernière allumette a gagné.", -350, 165,(254,222,201), "left",16, "normal",(1,3), turtle)          #
-    text("Le deuxième joueur est l'ordinateur.", -350, 135,(254,222,201), "left",16, "normal",(1,3), turtle)                        #
-    text(f"Un joueur ne peut retirer que {texte} par tour.", -350, 105,(254,222,201), "left",16, "normal",(1,3), turtle)            #
-    text("Un joueur ne peut retirer que des allumettes d'un même tas pendant un tour.", -350, 75,(254,222,201), "left",16, "normal",(1,3), turtle)
-    text("Le joueur qui commence est le joueur 1.", -350, 45,(254,222,201), "left",16, "normal",(1,3), turtle)                      #
-    text("Le jeu utilise les fleches directionnelles.", -350, 15,(254,222,201), "left",16, "normal",(1,3), turtle)                  #
-    text("Utilisez les fleches haut/bas pour changer de tas et", -350,-15,(254,222,201), "left",16, "normal",(1,3), turtle)           #
-    text("les fleches gauche/droite pour changer le nombre de goombas selectionné.", -350,-45,(254,222,201), "left",16, "normal",(1,3), turtle)  
-    turtle.up()                                                                                                                     # 
+    text(f"Il y a {nb_tas} tas d'allumettes", -350, 225,(254,222,201), "left",16, "normal",(1,3), turtle)                           # affiche nombre de tas d'allumette
+    text(f"contenant chacun entre {regle[0]} et {nb_allumettes_max} allumettes:", -350, 195,(254,222,201), "left",16, "normal",(1,3), turtle) #affiche nb allumette contenue dans règle et nombre max allu
+    text("Le joueur qui prend la dernière allumette a gagné.", -350, 165,(254,222,201), "left",16, "normal",(1,3), turtle)          # affiche condition de victoire 
+    text("Le deuxième joueur est l'ordinateur.", -350, 135,(254,222,201), "left",16, "normal",(1,3), turtle)                        # affiche le fait que l'on joue contre une IA 
+    text(f"Un joueur ne peut retirer que {texte} par tour.", -350, 105,(254,222,201), "left",16, "normal",(1,3), turtle)            # le joueur ne peut retirer que nombre allumettes par tour
+    text("Un joueur ne peut retirer que des allumettes d'un même tas pendant un tour.", -350, 75,(254,222,201), "left",16, "normal",(1,3), turtle) #
+    text("Le joueur qui commence est le joueur 1.", -350, 45,(254,222,201), "left",16, "normal",(1,3), turtle)                      # affiche le fait que joueur 1 commence 
+    text("Le jeu utilise les fleches directionnelles.", -350, 15,(254,222,201), "left",16, "normal",(1,3), turtle)                  # affiche commandes directionnelles 
+    text("Utilisez les fleches haut/bas pour changer de tas et", -350,-15,(254,222,201), "left",16, "normal",(1,3), turtle)         # pareil 
+    text("les fleches gauche/droite pour changer le nombre de goombas selectionné.", -350,-45,(254,222,201), "left",16, "normal",(1,3), turtle)
+    turtle.up()                                                                                                                     # lève le crayon 
     turtle_regle=t.Turtle()                                                                                                         # creation d'une tortue exclusive aux regles
     turtle_regle.hideturtle()                                                                                                       # cache cette tortue
     turtle_regle.up()                                                                                                               # leve le crayon
@@ -589,22 +588,22 @@ def menuregle(nb_tas: int, nb_allumettes_max: int, regle: list[int],turtle=t) ->
 def menucredits() -> None:
     """Affiche les credits du jeu."""
     t.clear()                                                                                                                       # efface la tortue 
-    t.color(222,88,25)                                                                                                              #set la couleur du panneau (orange)
-    t.up()                                                                                                                          #lève le sylo
-    t.goto(-190,28)                                                                                                                 #va au coordonnées du haut gauche du panneau 
-    t.down()                                                                                                                        #pose le stylo
-    t.begin_fill()                                                                                                                  #remplissage 
-    t.forward(381)                                                                                                                  #avance la longueur du panneaux
-    t.left(90)                                                                                                                      #tourne de 90 degrés
-    t.forward(178)                                                                                                                  #avance largeur carré 
-    t.left(90)                                                                                                                      #tourne de 90 degrés 
-    t.forward(381)                                                                                                                  #avance largeur du panneau 
-    t.left(90)                                                                                                                      #tourne de 90 degrés 
-    t.forward(178)                                                                                                                  #avance de largeur panneau 
-    t.left(90)                                                                                                                      #tourne de 90 degrés 
-    t.end_fill()                                                                                                                    #fin du rempliasse 
-    text("CREDITS", 0, 90, (254,222,201), "center", 30, "bold",3,t)                                                                 #éciture du texte "CREDIT" centré dans le panneau 
-    text("Made by Loïc & Rémi", 0, 40, (254,222,201), "center", 16, "bold",3,t)                                                     #écriture du texte "Made by Loïc & Rémi"centré dans le panneau
+    t.color(222,88,25)                                                                                                              # set la couleur du panneau (orange)
+    t.up()                                                                                                                          # lève le sylo
+    t.goto(-190,28)                                                                                                                 # va au coordonnées du haut gauche du panneau 
+    t.down()                                                                                                                        # pose le stylo
+    t.begin_fill()                                                                                                                  # remplissage 
+    t.forward(381)                                                                                                                  # avance la longueur du panneaux
+    t.left(90)                                                                                                                      # tourne de 90 degrés
+    t.forward(178)                                                                                                                  # avance largeur carré 
+    t.left(90)                                                                                                                      # tourne de 90 degrés 
+    t.forward(381)                                                                                                                  # avance largeur du panneau 
+    t.left(90)                                                                                                                      # tourne de 90 degrés 
+    t.forward(178)                                                                                                                  # avance de largeur panneau 
+    t.left(90)                                                                                                                      # tourne de 90 degrés 
+    t.end_fill()                                                                                                                    # fin du rempliasse 
+    text("CREDITS", 0, 90, (254,222,201), "center", 30, "bold",3,t)                                                                 # éciture du texte "CREDIT" centré dans le panneau 
+    text("Made by Loïc & Rémi", 0, 40, (254,222,201), "center", 16, "bold",3,t)                                                     # écriture du texte "Made by Loïc & Rémi"centré dans le panneau
 
 
 def menumain(regle=[1,2,3], nb_tas = 4, nb_allumettes_max = 8) -> None:
@@ -627,12 +626,12 @@ def menumain(regle=[1,2,3], nb_tas = 4, nb_allumettes_max = 8) -> None:
     whatisthemenu="mainmenu"                                                                                                        # affichage du menu principal par défaut
     update_menu(whatisselected,mainmenu,tr)                                                                                         # affiche le menu principal
     try:
-        t.onkey(t.bye, controles["echap"])                                                                                              # ferme la fenêtre avec la touche "Escape"
-        t.onkey(lambda :up_down(whatisthemenu,1,tr), controles["up"])                                                                   # déplace la sélection vers le haut
-        t.onkey(lambda :up_down(whatisthemenu,-1,tr), controles["down"])                                                                # déplace la sélection vers le bas
-        t.onkey(lambda :select(regle,nb_tas,nb_allumettes_max,tr), controles["enter"])                                                  # valide la selection
-        t.listen()                                                                                                                      # "écoute" les touches définit plus haut
-        t.mainloop()                                                                                                                    # lance la boucle principale
+        t.onkey(t.bye, controles["echap"])                                                                                          # ferme la fenêtre avec la touche "Escape"
+        t.onkey(lambda :up_down(whatisthemenu,1,tr), controles["up"])                                                               # déplace la sélection vers le haut
+        t.onkey(lambda :up_down(whatisthemenu,-1,tr), controles["down"])                                                            # déplace la sélection vers le bas
+        t.onkey(lambda :select(regle,nb_tas,nb_allumettes_max,tr), controles["enter"])                                              # valide la selection
+        t.listen()                                                                                                                  # "écoute" les touches définit plus haut
+        t.mainloop()                                                                                                                # lance la boucle principale
     except t.Terminator:
         print("bite")
         return None
@@ -641,6 +640,5 @@ if __name__ == "__main__":                                                      
     regle=[1,2,3]                                                                                                                   # regle par défaut
     nb_tas=4                                                                                                                        # nombre de tas par défaut
     nb_allumettes_max=8                                                                                                             # nombre d'allumettes max par tas par défaut
-    menumain(regle,randint(1,4),nb_allumettes_max)                                                                                  # lance le jeu, avec les regles par défaut, un nombre de tas aléatoire et le nombre d'allumettes max par défaut
+    menumain(regle,4,nb_allumettes_max)                                                                                             # lance le jeu, avec les regles par défaut, un nombre de tas aléatoire et le nombre d'allumettes max par défaut
 # FIN DU CODE
-#TODO: faire menu how to play
