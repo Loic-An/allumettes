@@ -469,7 +469,10 @@ def select(regle: list[int],nb_tas: int,nb_allumettes_max: int,turtle=t):
             turtle_joueur.clear()                                                                                                   # on efface la flèche du joueur
         whatisselected=whatisthemenu.upper()                                                                                        # on change la sélection
         whatisthemenu="mainmenu"                                                                                                    # on change le menu
-    turtle.clear()                                                                                                                  # on efface la tortue
+    try:
+        turtle.clear()                                                                                                              # on efface la tortue
+    except t.TK._tkinter.TclError:
+        return None
     turtle.up()                                                                                                                     # on lève le crayon
     loading = t.Turtle()                                                                                                            # on crée une nouvelle tortue de chargement
     loading.hideturtle()                                                                                                            # on cache la tortue de chargement
@@ -526,6 +529,8 @@ def singleplayer(regle: list[int], nb_tas: int, nb_allumettes_max: int) -> None:
     t.onkey(lambda: left_right(1,turtle_compteur) if joueur else None, controles["right"])                                          # permet de changer la quantité d'allumettes
     t.onkey(lambda: left_right(-1,turtle_compteur) if joueur else None, controles["left"])                                          # pareil
     t.listen()                                                                                                                      # permet d'écouter les nouvelles touches
+    if not joueur:
+        tour_ordi(nb_tas,regle,nb_allumettes_max)
 
 def mex(l):
     i = 0
@@ -554,52 +559,20 @@ def valJeuAllumettes(regle, pile):
 
 
 def afficheJoueurStratGagnanteAllumettes(pile, regle):
-    if valJeuAllumettes(pile, regle) == 0:
-        print("le second joueur a une strategie gagnante")
-        for i in range(len(pile)):
-            for p in regle:
-                if pile[i] >= p:
-                    pilemouv = pile.copy()
-                    pilemouv[i] = pile[i] - p
-                    finalval = valJeuAllumettes(pilemouv, regle)
-                    if finalval != 0:
-                        return (i,p)
-                        print(
-                            "dans la pile d'indice  "
-                            + str(i)
-                            + " [contenant "
-                            + str(pile[i])
-                            + " allumettes]: prendre "
-                            + str(p)
-                            + " allumettes"
-                        )
-        
-    else:
-        print("le premier joueur a une strategie gagnante")
-        for i in range(len(pile)):
-            for p in regle:
-                if pile[i] >= p:
-                    pilemouv = pile.copy()
-                    pilemouv[i] = pile[i] - p
-                    finalval = valJeuAllumettes(pilemouv, regle)
-                    if finalval == 0:
-                        return (i,p)
-                        print(
-                            "dans la pile d'indice  "
-                            + str(i)
-                            + " [contenant "
-                            + str(pile[i])
-                            + " allumettes]: prendre "
-                            + str(p)
-                            + " allumettes"
-                        )
+    b=bool(valJeuAllumettes(pile, regle))
+    for i in range(len(pile)):
+        for p in regle:
+            if pile[i] >= p:
+                pilemouv = pile[:]
+                pilemouv[i] = pile[i] - p
+                if bool(valJeuAllumettes(pilemouv, regle))^b:
+                    return (i,p)
 
 
 def tour_ordi(nb_tas, regle,nb_allumettes_max):
     """Fonction qui permet à l'ordinateur de jouer."""
     global turtle_fg, tr, tas_selectionne,l_alive
     strat=afficheJoueurStratGagnanteAllumettes(l_alive,regle)
-    print(strat)
     if strat==None:
         return None
     a,b = strat[0],strat[1]                                                                                                    # choisit un nombre d'allumettes au hasard
