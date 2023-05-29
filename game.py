@@ -390,10 +390,11 @@ def select(regle: list[int],nb_tas: int,nb_allumettes_max: int,turtle=t):
             set_goomba(tas_selectionne[0],i,0,list_turtle_g[tas_selectionne[0]][i])                                                 # transforme les goombas en goombas morts
             t.update()                                                                                                              # met à jour l'écran
         l_alive[tas_selectionne[0]]-=tas_selectionne[1]                                                                             # enlève les allumettes du tas
-        if sum(l_alive)<regle[0] or (sum(l_alive)==l_alive[tas_selectionne[0]] and 0<l_alive[tas_selectionne[0]]<regle[0]):         # s'il n'y a plus d'allumettes ou plus assez pour jouer
+        if all([i<regle[0] for i in l_alive]):
+        #if sum(l_alive)<regle[0] or (sum(l_alive)==l_alive[tas_selectionne[0]] and 0<l_alive[tas_selectionne[0]]<regle[0]):         # s'il n'y a plus d'allumettes ou plus assez pour jouer
             turtle.clear()                                                                                                          # efface et noircit l'écran
-            if 0<sum(l_alive):                                                                                                      # si le joueur ne reussit pas à prendre la dernière allumette, il perd
-                joueur = (joueur + 1 )%2                                                                                            # change de joueur
+            #if 0<sum(l_alive):                                                                                                      # si le joueur ne reussit pas à prendre la dernière allumette, il perd
+            #    joueur = (joueur + 1 )%2                                                                                            # change de joueur
             turtle_compteur.clear()                                                                                                 # efface le compteur
             turtle_fg.clear()                                                                                                       # efface la fleche goomba
             turtle_fj.clear()                                                                                                       # efface le fleche joueur
@@ -418,27 +419,27 @@ def select(regle: list[int],nb_tas: int,nb_allumettes_max: int,turtle=t):
             over,isgamestarted = isgamestarted, over                                                                                # le jeu n'est plus lancé
             setpersonnages_joueur(turtle_joueur, (0,joueur))                                                                        # affiche mario selon le joueur qui a gagné
             whatisselected = "PLAY AGAIN"                                                                                           # affiche le menu pour recommencer ou retourner au menu principal
+            update_menu(whatisselected, deathmenu, turtle)                                                                          # rafraichit le menu 
             t.onkey(lambda :up_down(whatisthemenu, 1,turtle), controles["up"])                                                      # déplace la sélection vers le haut
             t.onkey(lambda :up_down(whatisthemenu,-1,turtle), controles["down"])                                                    # déplace la sélection vers le bas
-            t.listen()                                                                                                              # écoute les touches
-            update_menu(whatisselected, deathmenu, turtle)                                                                          # rafraichit le menu                                                                   
+            t.listen()                                                                                                              # écoute les touches                                                                  
         elif not over:                                                                                                              # sinon si le jeu n'est pas fini
             up_down("singleplayer",0,turtle_fg)                                                                                     # actualise la position de la fleche goomba
-            p = sum([i for i in l_alive if i<regle[0]])                                                                             # nombre d'allumettes inaccessibles
-            global l_tas
-            q = sum([l_tas[i]-l_alive[i] for i in range(len(l_alive)) if l_alive[i]>=regle[0]])                                     # nombre d'allumettes redistribuables
-            if p<=q and p>0:                                                                                                        # s'il y a des allumettes inaccessibles et assez de place pour les redistribuer
-                for i in range(nb_tas):                                                                                             # pour chaque tas
-                    if l_alive[i]<regle[0]:                                                                                         # si le tas est inacessible
-                        a = l_alive[i]                                                                                              # nombre d'allumettes dans le tas
-                        for j in range(a-1,-1,-1):                                                                                  # pour chaque allumette du tas
-                            set_goomba(i,j,0,list_turtle_g[i][j])                                                                   # on affiche un goomba morts
-                        l_alive[i]=0                                                                                                # le tas est vide
-                        continue                                                                                                    # on passe au tas suivant
-                    while l_alive[i]<l_tas[i] and p>0:                                                                              # tant qu'il y a des allumettes à redistribuer
-                        set_goomba(i,l_alive[i],1,list_turtle_g[i][l_alive[i]])                                                     # on affiche un goomba vivant
-                        l_alive[i]+=1                                                                                               # on ajoute une allumette au tas
-                        p-=1                                                                                                        # on enlève une allumette à redistribuer
+            #p = sum([i for i in l_alive if i<regle[0]])                                                                             # nombre d'allumettes inaccessibles
+            #global l_tas
+            #q = sum([l_tas[i]-l_alive[i] for i in range(len(l_alive)) if l_alive[i]>=regle[0]])                                     # nombre d'allumettes redistribuables
+            # if p<=q and p>0:                                                                                                        # s'il y a des allumettes inaccessibles et assez de place pour les redistribuer
+            #     for i in range(nb_tas):                                                                                             # pour chaque tas
+            #         if l_alive[i]<regle[0]:                                                                                         # si le tas est inacessible
+            #             a = l_alive[i]                                                                                              # nombre d'allumettes dans le tas
+            #             for j in range(a-1,-1,-1):                                                                                  # pour chaque allumette du tas
+            #                 set_goomba(i,j,0,list_turtle_g[i][j])                                                                   # on affiche un goomba morts
+            #             l_alive[i]=0                                                                                                # le tas est vide
+            #             continue                                                                                                    # on passe au tas suivant
+            #         while l_alive[i]<l_tas[i] and p>0:                                                                              # tant qu'il y a des allumettes à redistribuer
+            #             set_goomba(i,l_alive[i],1,list_turtle_g[i][l_alive[i]])                                                     # on affiche un goomba vivant
+            #             l_alive[i]+=1                                                                                               # on ajoute une allumette au tas
+            #             p-=1                                                                                                        # on enlève une allumette à redistribuer
             left_right(0,turtle_compteur)                                                                                           # actualise le compteur
             joueur = (joueur +1)%2                                                                                                  # change de joueur
             set_fleche_joueur(joueur,turtle_fj)                                                                                     # actualise le joueur
@@ -599,7 +600,7 @@ def menuregle(nb_tas: int, nb_allumettes_max: int, regle: list[int],turtle=t) ->
         turtle.right(90)                                                                                                            # tourne de 90°
     turtle.end_fill()                                                                                                               # termine le remplissage
     if len(regle) == 1:                                                                                                             # si la regle est de la forme [x]
-        texte = str(regle[0]) + " allumette"+ ("s" if regle!=1 else "")                                                             # affiche "1 allumette" ou "x allumettes"
+        texte = str(regle[0]) + " allumette"+ ("s" if regle[0]!=1 else "")                                                          # affiche "1 allumette" ou "x allumettes"
     else:                                                                                                                           # sinon
         texte = ', '.join(map(lambda a: str(a),regle[:-1]))+f" ou {regle[-1]} allumettes"                                           # affiche "x, y ou z allumettes"
     text("regle du jeu :", 0, 255,(254,222,201), "center",24, "normal",(1,3), turtle)                                               # Affiche la règle du jeu
@@ -609,7 +610,7 @@ def menuregle(nb_tas: int, nb_allumettes_max: int, regle: list[int],turtle=t) ->
     text("Le deuxième joueur est l'ordinateur.", -350, 135,(254,222,201), "left",16, "normal",(1,3), turtle)                        # affiche le fait que l'on joue contre une IA 
     text(f"Un joueur ne peut retirer que {texte} par tour.", -350, 105,(254,222,201), "left",16, "normal",(1,3), turtle)            # le joueur ne peut retirer que nombre allumettes par tour
     text("Un joueur ne peut retirer que des allumettes d'un même tas pendant un tour.", -350, 75,(254,222,201), "left",16, "normal",(1,3), turtle) #
-    text("Le joueur qui commence est le joueur 1.", -350, 45,(254,222,201), "left",16, "normal",(1,3), turtle)                      # affiche le fait que joueur 1 commence 
+    text("Le joueur qui commence est aléatoire.", -350, 45,(254,222,201), "left",16, "normal",(1,3), turtle)                        # affiche le fait que joueur 1 commence 
     text("Le jeu utilise les fleches directionnelles.", -350, 15,(254,222,201), "left",16, "normal",(1,3), turtle)                  # affiche commandes directionnelles 
     text("Utilisez les fleches haut/bas pour changer de tas et", -350,-15,(254,222,201), "left",16, "normal",(1,3), turtle)         # pareil 
     text("les fleches gauche/droite pour changer le nombre de goombas selectionné.", -350,-45,(254,222,201), "left",16, "normal",(1,3), turtle)
